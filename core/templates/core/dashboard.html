@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Hub | Live Arena</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
+            color: #f8fafc;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .sport-nav {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 2px solid #38bdf8;
+            padding: 10px 0;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        .sport-link {
+            color: #94a3b8; text-decoration: none; font-weight: 700;
+            padding: 8px 15px; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .sport-link:hover, .sport-link.active { color: #38bdf8; }
+
+        .more-sports-container { position: relative; }
+        .more-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            color: #334155;
+            width: 550px;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            z-index: 3000;
+            margin-top: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        .more-dropdown.show { display: grid; }
+        .more-item {
+            padding: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 6px;
+        }
+        .more-item:hover { color: #38bdf8; background: #f1f5f9; }
+
+        .match-card-horizontal {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            padding: 20px;
+        }
+        .team-logo-small { width: 30px; height: 30px; object-fit: contain; }
+        .score-box {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 6px; padding: 5px 15px;
+            min-width: 120px; text-align: center;
+            border: 1px solid #334155; color: #38bdf8;
+            font-weight: 800; font-size: 1.1rem;
+        }
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0;
+            overflow: hidden; border-radius: 10px; margin-top: 15px;
+            background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .video-wrapper iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+        }
+        .btn-highlights {
+            font-size: 0.75rem; color: #38bdf8; border: 1px solid #38bdf8;
+            background: transparent; border-radius: 20px; padding: 4px 15px;
+            transition: 0.3s; margin-top: 10px;
+        }
+        .btn-highlights:hover { background: #38bdf8; color: #0f172a; }
+        .btn-logout { background: #ef4444; border: none; padding: 8px 20px; border-radius: 30px; color: white; font-weight: 700; }
+        
+        .text-overs { color: #cbd5e1 !important; font-weight: 400; } 
+
+        .meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: .02em;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            color: #cbd5e1;
+            white-space: nowrap;
+        }
+        .meta-pill strong { color: #38bdf8; }
+        .details-box {
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(56, 189, 248, 0.10);
+            border-radius: 12px;
+        }
+        .detail-label {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+        .detail-value { color: #e2e8f0; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar sticky-top p-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span class="navbar-brand h1 mb-0 text-white fw-bold">🏆 <span style="color: #38bdf8;">SPORTS</span>HUB</span>
+        <form action="{% url 'logout' %}" method="post" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="sport-nav sticky-top" style="top: 76px; z-index: 1020;">
+    <div class="sport-link active" onclick="filterSport('all', this)">All Sports</div>
+    <div class="sport-link" onclick="filterSport('cricket', this)">🏏 Cricket</div>
+    <div class="sport-link" onclick="filterSport('football', this)">⚽ Football</div>
+    <div class="sport-link" onclick="filterSport('volleyball', this)">🏐 Volleyball</div>
+    
+    <div class="more-sports-container">
+        <div class="sport-link" id="moreSportsBtn">MORE SPORTS ▾</div>
+        <div id="moreDropdown" class="more-dropdown">
+            <div class="more-item" onclick="filterSport('tennis', this)">🎾 Tennis</div>
+            <div class="more-item" onclick="filterSport('basketball', this)">🏀 Basketball</div>
+            <div class="more-item" onclick="filterSport('badminton', this)">🏸 Badminton</div>
+            <div class="more-item" onclick="filterSport('boxing', this)">🥊 Boxing</div>
+            <div class="more-item" onclick="filterSport('motorsport', this)">🏎️ Motorsport</div>
+            <div class="more-item" onclick="filterSport('golf', this)">🏌️ Golf</div>
+            <div class="more-item" onclick="filterSport('handball', this)">🤾 Handball</div>
+            <div class="more-item" onclick="filterSport('ice_hockey', this)">🏒 Ice Hockey</div>
+            <div class="more-item" onclick="filterSport('rugby', this)">🏉 Rugby</div>
+            <div class="more-item" onclick="filterSport('snooker', this)">🎱 Snooker</div>
+            <div class="more-item" onclick="filterSport('table_tennis', this)">🏓 Table Tennis</div>
+            <div class="more-item" onclick="filterSport('water_polo', this)">🤽 Water Polo</div>
+            <div class="more-item" onclick="filterSport('darts', this)">🎯 Darts</div>
+            <div class="more-item" onclick="filterSport('esports', this)">🎮 Esports</div>
+            <div class="more-item" onclick="filterSport('horse_racing', this)">🏇 Horse Racing</div>
+            <div class="more-item" onclick="filterSport('baseball', this)">⚾ Baseball</div>
+            <div class="more-item" onclick="filterSport('kabaddi', this)">🏟️ Kabaddi</div>
+            <div class="more-item" onclick="filterSport('athletics', this)">🏃 Athletics</div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            
+            <div class="sport-section" id="section-cricket">
+                <h5 class="text-info fw-bold mb-3">CRICKET MATCHES</h5>
+                {% for match in cricket_matches %}
+                <div class="match-card-horizontal">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div style="width: 35%;">
+                            {% if match.home_team.logo %}<img src="{{ match.home_team.logo.url }}" class="team-logo-small me-2">{% endif %}
+                            <span class="fw-bold">{{ match.home_team.name }}</span>
+                        </div>
+                        <div class="score-box">
+                            <div>{{ match.home_runs }}/{{ match.home_wickets }} <span class="text-overs">({{ match.home_overs }})</span></div>
+                            <div class="text-white opacity-50" style="font-size: 0.6rem;">VS</div>
+                            <div>{{ match.away_runs }}/{{ match.away_wickets }} <span class="text-overs">({{ match.away_overs }})</span></div>
+                        </div>
+                        <div class="text-end" style="width: 35%;">
+                            <span class="fw-bold">{{ match.away_team.name }}</span>
+                            {% if match.away_team.logo %}<img src="{{ match.away_team.logo.url }}" class="team-logo-small ms-2">{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge {% if match.status == 'LIVE' %}bg-danger{% elif match.status == 'FINISHED' %}bg-success{% else %}bg-secondary{% endif %}">{{ match.get_status_display|default:match.status }}</span>
+                            {% if match.match_datetime %}
+                                <span class="meta-pill">Start <strong>{{ match.match_datetime|date:"D, d M" }} {{ match.match_datetime|time:"H:i" }}</strong></span>
+                            {% endif %}
+                            {% if match.competition_name %}
+                                <span class="meta-pill">Competition <strong>{{ match.competition_name }}</strong></span>
+                            {% endif %}
+                            {% if match.venue %}
+                                <span class="meta-pill">Venue <strong>{{ match.venue }}</strong></span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-info" href="{% url 'match_detail' 'cricket' match.id %}">Match Center</a>
+                            <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#details-cr-{{ match.id }}">Details</button>
+                        </div>
+                    </div>
+
+                    <div class="collapse mt-3" id="details-cr-{{ match.id }}">
+                        <div class="details-box p-3">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="detail-label">Round / Type</div>
+                                    <div class="detail-value">{{ match.round_name|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Venue</div>
+                                    <div class="detail-value">
+                                        {{ match.venue|default:"—" }}
+                                        {% if match.city or match.country %}
+                                            <span class="text-secondary fw-normal">({{ match.city|default_if_none:"" }}{% if match.city and match.country %}, {% endif %}{{ match.country|default_if_none:"" }})</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Officials</div>
+                                    <div class="detail-value">{{ match.referee|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Toss</div>
+                                    <div class="detail-value">
+                                        {% if match.toss_winner %}
+                                            {{ match.toss_winner.name }} {% if match.toss_decision %}({{ match.get_toss_decision_display }}){% endif %}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Data Source</div>
+                                    <div class="detail-value">{{ match.get_data_source_display|default:match.data_source }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">External API ID</div>
+                                    <div class="detail-value">{{ match.external_api_id|default:"—" }}</div>
+                                </div>
+                                {% if match.current_status_text %}
+                                <div class="col-12">
+                                    <div class="detail-label">Live Note</div>
+                                    <div class="detail-value">{{ match.current_status_text }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if match.status == 'FINISHED' and match.highlights_url %}
+                    <div class="text-center mt-3">
+                        <button class="btn btn-highlights" type="button" data-bs-toggle="collapse" data-bs-target="#vid-cr-{{ match.id }}">🎬 Watch Highlights</button>
+                        <div class="collapse" id="vid-cr-{{ match.id }}">
+                            <div class="video-wrapper">
+                                <iframe src="{{ match.highlights_url }}" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-muted small">No cricket matches scheduled.</p>
+                {% endfor %}
+            </div>
+
+            <div class="sport-section mt-5" id="section-football">
+                <h5 class="text-info fw-bold mb-3">FOOTBALL MATCHES</h5>
+                {% for match in football_matches %}
+                <div class="match-card-horizontal">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div style="width: 35%;">
+                            {% if match.home_team.logo %}<img src="{{ match.home_team.logo.url }}" class="team-logo-small me-2">{% endif %}
+                            <span class="fw-bold">{{ match.home_team.name }}</span>
+                        </div>
+                        <div class="score-box">{{ match.home_score }} - {{ match.away_score }}</div>
+                        <div class="text-end" style="width: 35%;">
+                            <span class="fw-bold">{{ match.away_team.name }}</span>
+                            {% if match.away_team.logo %}<img src="{{ match.away_team.logo.url }}" class="team-logo-small ms-2">{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge {% if match.status == 'LIVE' %}bg-danger{% elif match.status == 'FINISHED' %}bg-success{% else %}bg-secondary{% endif %}">{{ match.get_status_display|default:match.status }}</span>
+                            {% if match.match_datetime %}
+                                <span class="meta-pill">Kickoff <strong>{{ match.match_datetime|date:"D, d M" }} {{ match.match_datetime|time:"H:i" }}</strong></span>
+                            {% endif %}
+                            {% if match.competition_name %}
+                                <span class="meta-pill">League <strong>{{ match.competition_name }}</strong></span>
+                            {% endif %}
+                            {% if match.round_name %}
+                                <span class="meta-pill">Round <strong>{{ match.round_name }}</strong></span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-info" href="{% url 'match_detail' 'football' match.id %}">Match Center</a>
+                            <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#details-fb-{{ match.id }}">Details</button>
+                        </div>
+                    </div>
+
+                    <div class="collapse mt-3" id="details-fb-{{ match.id }}">
+                        <div class="details-box p-3">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="detail-label">Venue</div>
+                                    <div class="detail-value">{{ match.venue|default:"—" }}{% if match.city %}<span class="text-secondary fw-normal"> ({{ match.city }})</span>{% endif %}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Referee</div>
+                                    <div class="detail-value">{{ match.referee|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Season</div>
+                                    <div class="detail-value">{{ match.season_name|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Data Source</div>
+                                    <div class="detail-value">{{ match.get_data_source_display|default:match.data_source }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">External API ID</div>
+                                    <div class="detail-value">{{ match.external_api_id|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Competition</div>
+                                    <div class="detail-value">{{ match.competition_name|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if match.status == 'FINISHED' and match.highlights_url %}
+                    <div class="text-center mt-3">
+                        <button class="btn btn-highlights" type="button" data-bs-toggle="collapse" data-bs-target="#vid-fb-{{ match.id }}">🎬 Watch Highlights</button>
+                        <div class="collapse" id="vid-fb-{{ match.id }}">
+                            <div class="video-wrapper">
+                                <iframe src="{{ match.highlights_url }}" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-muted small">No football matches scheduled.</p>
+                {% endfor %}
+            </div>
+
+            <div class="sport-section mt-5" id="section-volleyball">
+                <h5 class="text-info fw-bold mb-3">VOLLEYBALL MATCHES</h5>
+                {% for match in volleyball_matches %}
+                <div class="match-card-horizontal">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div style="width: 35%;">
+                            {% if match.home_team.logo %}<img src="{{ match.home_team.logo.url }}" class="team-logo-small me-2">{% endif %}
+                            <span class="fw-bold">{{ match.home_team.name }}</span>
+                        </div>
+                        <div class="score-box">
+                            {{ match.home_sets_won }} - {{ match.away_sets_won }}
+                            <div style="font-size: 0.6rem; color: #94a3b8;">SETS</div>
+                        </div>
+                        <div class="text-end" style="width: 35%;">
+                            <span class="fw-bold">{{ match.away_team.name }}</span>
+                            {% if match.away_team.logo %}<img src="{{ match.away_team.logo.url }}" class="team-logo-small ms-2">{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge {% if match.status == 'LIVE' %}bg-danger{% elif match.status == 'FINISHED' %}bg-success{% else %}bg-secondary{% endif %}">{{ match.get_status_display|default:match.status }}</span>
+                            {% if match.match_datetime %}
+                                <span class="meta-pill">Start <strong>{{ match.match_datetime|date:"D, d M" }} {{ match.match_datetime|time:"H:i" }}</strong></span>
+                            {% endif %}
+                            {% if match.competition_name %}
+                                <span class="meta-pill">Competition <strong>{{ match.competition_name }}</strong></span>
+                            {% endif %}
+                            {% if match.round_name %}
+                                <span class="meta-pill">Round <strong>{{ match.round_name }}</strong></span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-info" href="{% url 'match_detail' 'volleyball' match.id %}">Match Center</a>
+                            <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#details-vb-{{ match.id }}">Details</button>
+                        </div>
+                    </div>
+
+                    <div class="collapse mt-3" id="details-vb-{{ match.id }}">
+                        <div class="details-box p-3">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="detail-label">Venue</div>
+                                    <div class="detail-value">{{ match.venue|default:"—" }}{% if match.city %}<span class="text-secondary fw-normal"> ({{ match.city }})</span>{% endif %}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Officials</div>
+                                    <div class="detail-value">{{ match.referee|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Season</div>
+                                    <div class="detail-value">{{ match.season_name|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Data Source</div>
+                                    <div class="detail-value">{{ match.get_data_source_display|default:match.data_source }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">External API ID</div>
+                                    <div class="detail-value">{{ match.external_api_id|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Competition</div>
+                                    <div class="detail-value">{{ match.competition_name|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if match.status == 'FINISHED' and match.highlights_url %}
+                    <div class="text-center mt-3">
+                        <button class="btn btn-highlights" type="button" data-bs-toggle="collapse" data-bs-target="#vid-vb-{{ match.id }}">🎬 Watch Highlights</button>
+                        <div class="collapse" id="vid-vb-{{ match.id }}">
+                            <div class="video-wrapper">
+                                <iframe src="{{ match.highlights_url }}" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-muted small">No volleyball matches scheduled.</p>
+                {% endfor %}
+            </div>
+
+            {% regroup universal_matches by get_sport_display as sport_list %}
+            {% for sport_group in sport_list %}
+            <div class="sport-section mt-5" id="section-{{ sport_group.list.0.sport|lower }}">
+                <h5 class="text-info fw-bold mb-3">{{ sport_group.grouper|upper }} MATCHES</h5>
+                {% for match in sport_group.list %}
+                <div class="match-card-horizontal">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div style="width: 35%;">
+                            {% if match.home_team.logo %}<img src="{{ match.home_team.logo.url }}" class="team-logo-small me-2">{% endif %}
+                            <span class="fw-bold">{{ match.home_team.name }}</span>
+                        </div>
+                        <div class="score-box">
+                            {{ match.home_score }} - {{ match.away_score }}
+                        </div>
+                        <div class="text-end" style="width: 35%;">
+                            <span class="fw-bold">{{ match.away_team.name }}</span>
+                            {% if match.away_team.logo %}<img src="{{ match.away_team.logo.url }}" class="team-logo-small ms-2">{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge {% if match.status == 'LIVE' %}bg-danger{% elif match.status == 'FINISHED' %}bg-success{% else %}bg-secondary{% endif %}">{{ match.get_status_display|default:match.status }}</span>
+                            <span class="meta-pill">Sport <strong>{{ match.get_sport_display }}</strong></span>
+                            {% if match.match_datetime %}
+                                <span class="meta-pill">Start <strong>{{ match.match_datetime|date:"D, d M" }} {{ match.match_datetime|time:"H:i" }}</strong></span>
+                            {% endif %}
+                            {% if match.match_info %}
+                                <span class="meta-pill">Info <strong>{{ match.match_info }}</strong></span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-info" href="{% url 'match_detail' 'universal' match.id %}">Match Center</a>
+                            <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#details-uni-{{ match.id }}">Details</button>
+                        </div>
+                    </div>
+
+                    <div class="collapse mt-3" id="details-uni-{{ match.id }}">
+                        <div class="details-box p-3">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="detail-label">Competition</div>
+                                    <div class="detail-value">{{ match.competition_name|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Round / Stage</div>
+                                    <div class="detail-value">{{ match.round_name|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Venue</div>
+                                    <div class="detail-value">{{ match.venue|default:"—" }}{% if match.city %}<span class="text-secondary fw-normal"> ({{ match.city }})</span>{% endif %}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Officials</div>
+                                    <div class="detail-value">{{ match.referee|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Data Source</div>
+                                    <div class="detail-value">{{ match.get_data_source_display|default:match.data_source }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">External API ID</div>
+                                    <div class="detail-value">{{ match.external_api_id|default:"—" }}</div>
+                                </div>
+                                {% if match.match_info %}
+                                <div class="col-12">
+                                    <div class="detail-label">Match Info</div>
+                                    <div class="detail-value">{{ match.match_info }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if match.status == 'FINISHED' and match.highlights_url %}
+                    <div class="text-center mt-3">
+                        <button class="btn btn-highlights" type="button" data-bs-toggle="collapse" data-bs-target="#vid-uni-{{ match.id }}">🎬 Watch Highlights</button>
+                        <div class="collapse" id="vid-uni-{{ match.id }}">
+                            <div class="video-wrapper">
+                                <iframe src="{{ match.highlights_url }}" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="col-lg-4">
+            <div class="p-4 rounded" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.1);">
+                <h5 class="fw-bold text-info mb-3">Standings</h5>
+                <table class="table table-dark table-sm table-hover">
+                    <thead><tr><th>Team</th><th class="text-center">PTS</th></tr></thead>
+                    <tbody>
+                        {% for team in teams %}
+                        <tr>
+                            <td>
+                                {% if team.logo %}<img src="{{ team.logo.url }}" style="width:20px; margin-right:5px;">{% endif %}
+                                {{ team.name }}
+                            </td>
+                            <td class="text-center fw-bold text-info">
+                                {{ team.total_points|default:"0" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // AUTO-CLEAN YOUTUBE LINKS
+    window.addEventListener('DOMContentLoaded', (event) => {
+        document.querySelectorAll('iframe').forEach(iframe => {
+            let src = iframe.getAttribute('src');
+            if (src && (src.includes('youtube.com') || src.includes('youtube-nocookie.com') || src.includes('youtu.be'))) {
+                const match = src.match(/(?:embed\/|v=|youtu\.be\/)([^?&"'>]+)/);
+                if (match && match[1]) {
+                    iframe.setAttribute('src', 'https://www.youtube.com/embed/' + match[1]);
+                }
+            }
+        });
+    });
+
+    // Menu logic
+    const moreBtn = document.getElementById('moreSportsBtn');
+    const moreDropdown = document.getElementById('moreDropdown');
+
+    moreBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        moreDropdown.classList.toggle('show');
+    });
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.more-sports-container')) {
+            moreDropdown.classList.remove('show');
+        }
+    }
+
+    // Filter logic
+    function filterSport(sport, element) {
+        // Remove active class from all nav items
+        document.querySelectorAll('.sport-link').forEach(link => link.classList.remove('active'));
+        document.querySelectorAll('.more-item').forEach(item => item.classList.remove('active'));
+        
+        // Handle active state for the clicked element
+        if (element.classList.contains('more-item')) {
+            moreBtn.classList.add('active');
+            moreDropdown.classList.remove('show');
+        } else {
+            element.classList.add('active');
+            moreBtn.classList.remove('active');
+        }
+
+        const sections = document.querySelectorAll('.sport-section');
+        if (sport === 'all') {
+            sections.forEach(sec => sec.style.display = 'block');
+        } else {
+            sections.forEach(sec => {
+            if(sec.id === 'section-' + sport.toLowerCase()) {
+                sec.style.display = 'block';
+            } else {
+                sec.style.display = 'none';
+            }
+            });
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

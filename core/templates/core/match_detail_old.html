@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Match Center | Sports Hub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
+      color: #f8fafc;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      background-attachment: fixed;
+    }
+    .card-glass {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      border-radius: 14px;
+    }
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(15, 23, 42, 0.65);
+      color: #cbd5e1;
+    }
+    .meta-chip strong { color: #38bdf8; }
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .details-grid { grid-template-columns: 1fr; }
+    }
+    .detail-item {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(56, 189, 248, 0.10);
+    }
+    .detail-label { color: #94a3b8; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .detail-value { color: #e2e8f0; font-weight: 700; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <a class="btn btn-outline-info btn-sm" href="{% url 'home_dashboard' %}">← Back</a>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <span class="meta-chip">Sport: <strong>{{ sport|capfirst }}</strong></span>
+        <span class="meta-chip">Status: <strong>{{ match.get_status_display|default:match.status }}</strong></span>
+        {% if match.match_datetime %}
+          <span class="meta-chip">Start: <strong>{{ match.match_datetime|date:"D, d M Y" }} {{ match.match_datetime|time:"H:i" }}</strong></span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card-glass p-4 mb-3">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-2">
+          {% if match.home_team.logo %}<img src="{{ match.home_team.logo.url }}" style="width:36px;height:36px;object-fit:contain;">{% endif %}
+          <div class="fw-bold fs-5">{{ match.home_team.name }}</div>
+        </div>
+
+        <div class="text-center">
+          {% if sport == 'cricket' %}
+            <div class="fw-bold" style="color:#38bdf8; font-size: 1.2rem;">
+              {{ match.home_runs }}/{{ match.home_wickets }} ({{ match.home_overs }}) &nbsp;vs&nbsp; {{ match.away_runs }}/{{ match.away_wickets }} ({{ match.away_overs }})
+            </div>
+            {% if match.current_status_text %}
+              <div class="text-secondary mt-1">{{ match.current_status_text }}</div>
+            {% endif %}
+          {% elif sport == 'volleyball' %}
+            <div class="fw-bold" style="color:#38bdf8; font-size: 1.4rem;">
+              {{ match.home_sets_won }} - {{ match.away_sets_won }}
+            </div>
+            <div class="text-secondary" style="font-size:0.85rem;">SETS</div>
+          {% else %}
+            <div class="fw-bold" style="color:#38bdf8; font-size: 1.6rem;">
+              {{ match.home_score }} - {{ match.away_score }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <div class="fw-bold fs-5">{{ match.away_team.name }}</div>
+          {% if match.away_team.logo %}<img src="{{ match.away_team.logo.url }}" style="width:36px;height:36px;object-fit:contain;">{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-glass p-4 mb-3">
+      <h5 class="fw-bold text-info mb-3">Match Details</h5>
+      <div class="details-grid">
+        <div class="detail-item">
+          <div class="detail-label">Competition</div>
+          <div class="detail-value">{{ match.competition_name|default:"—" }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Round / Stage</div>
+          <div class="detail-value">{{ match.round_name|default:"—" }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Venue</div>
+          <div class="detail-value">
+            {% if match.venue %}{{ match.venue }}{% else %}—{% endif %}
+            {% if match.city or match.country %}
+              <span class="text-secondary fw-normal">
+                ({{ match.city|default_if_none:"" }}{% if match.city and match.country %}, {% endif %}{{ match.country|default_if_none:"" }})
+              </span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Referee / Officials</div>
+          <div class="detail-value">{{ match.referee|default:"—" }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Data Source</div>
+          <div class="detail-value">{{ match.get_data_source_display|default:match.data_source }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">External API ID</div>
+          <div class="detail-value">{{ match.external_api_id|default:"—" }}</div>
+        </div>
+
+        {% if sport == 'cricket' %}
+          <div class="detail-item">
+            <div class="detail-label">Toss</div>
+            <div class="detail-value">
+              {% if match.toss_winner %}
+                {{ match.toss_winner.name }} {% if match.toss_decision %}({{ match.get_toss_decision_display }}){% endif %}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Live Note</div>
+            <div class="detail-value">{{ match.current_status_text|default:"—" }}</div>
+          </div>
+        {% endif %}
+
+        {% if sport == 'universal' and match.match_info %}
+          <div class="detail-item" style="grid-column: 1 / -1;">
+            <div class="detail-label">Match Info</div>
+            <div class="detail-value">{{ match.match_info }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if match.status == 'FINISHED' and match.highlights_url %}
+      <div class="card-glass p-4">
+        <h5 class="fw-bold text-info mb-3">Highlights</h5>
+        <div class="ratio ratio-16x9 rounded overflow-hidden" style="background:#000;">
+          <iframe src="{{ match.highlights_url }}" allowfullscreen></iframe>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Auto-clean YouTube links to embed format
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('iframe').forEach(iframe => {
+        let src = iframe.getAttribute('src');
+        if (!src) return;
+        if (src.includes('youtube.com') || src.includes('youtube-nocookie.com') || src.includes('youtu.be')) {
+          const m = src.match(/(?:embed\/|v=|youtu\.be\/)([^?&"'>]+)/);
+          if (m && m[1]) iframe.setAttribute('src', 'https://www.youtube.com/embed/' + m[1]);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

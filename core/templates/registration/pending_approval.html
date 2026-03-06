@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waiting for Approval</title>
+    <style>
+        body { background-color: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 40px; border-radius: 15px; border: 1px solid #38bdf8; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); max-width: 400px; }
+        h2 { color: #38bdf8; margin-top: 0; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #38bdf8; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="loader"></div>
+        <h2>Account Created</h2>
+        <p>Waiting till your request is approval by the Admin.</p>
+        <p style="font-size: 0.8rem; color: #94a3b8;">This page will automatically redirect once you are approved.</p>
+        <br>
+        <a href="{% url 'login' %}" style="color: #38bdf8; text-decoration: none;">Back to Login</a>
+    </div>
+
+    <script>
+        // Check approval status every 5 seconds
+        setInterval(function() {
+           fetch("{% url 'check_status' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_approved) {
+                        window.location.href = "{% url 'login' %}";
+                    }
+                });
+        }, 5000);
+    </script>
+</body>
+</html>

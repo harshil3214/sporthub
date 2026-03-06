@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Scorecard | Sports Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #13B497 0%, #10D876 100%);
+            --dark-bg: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --accent-blue: #4a90e2;
+            --accent-green: #27ae60;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-purple: #9b59b6;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow-large: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Header */
+        .main-header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Match Header */
+        .match-header {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-medium);
+            text-align: center;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--card-border);
+        }
+
+        .team-details {
+            text-align: left;
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-score {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .vs-divider {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0 2rem;
+        }
+
+        .match-status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .status-live {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--accent-red);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .status-completed {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--accent-green);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .status-upcoming {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--accent-orange);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        /* Scorecard Sections */
+        .scorecard-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Scorecard Table */
+        .scorecard-table {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .scorecard-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scorecard-table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
+        }
+
+        .scorecard-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+
+        .scorecard-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .player-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .stat-runs {
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .stat-wickets {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--accent-red);
+        }
+
+        .stat-overs {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--accent-green);
+        }
+
+        /* Live Updates */
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 20px;
+            color: var(--accent-red);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Commentary */
+        .commentary-item {
+            padding: 1rem;
+            border-left: 3px solid var(--accent-blue);
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .commentary-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .commentary-text {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .match-teams {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .vs-divider {
+                padding: 1rem 0;
+            }
+            
+            .team-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .team-details {
+                text-align: center;
+            }
+            
+            .scorecard-table {
+                font-size: 0.8rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <a href="/" class="logo">
+                    <i class="fas fa-trophy"></i>
+                    Sports Hub
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/scores/"><i class="fas fa-list me-2"></i>Scores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/competitions/"><i class="fas fa-trophy me-2"></i>Competitions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rankings/"><i class="fas fa-chart-bar me-2"></i>Rankings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news/"><i class="fas fa-newspaper me-2"></i>News</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favorites/"><i class="fas fa-star me-2"></i>Favorites</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- Match Header -->
+        <div class="match-header">
+            <div class="match-teams">
+                <div class="team-info">
+                    <img src="{{ match.home_team.logo.url|default:'/static/images/default-team.png' }}" alt="{{ match.home_team.name }}" class="team-logo">
+                    <div class="team-details">
+                        <div class="team-name">{{ match.home_team.name }}</div>
+                        <div class="team-score" id="home-score">{{ match.home_score }}</div>
+                    </div>
+                </div>
+                
+                <div class="vs-divider">VS</div>
+                
+                <div class="team-info">
+                    <div class="team-details">
+                        <div class="team-name">{{ match.away_team.name }}</div>
+                        <div class="team-score" id="away-score">{{ match.away_score }}</div>
+                    </div>
+                    <img src="{{ match.away_team.logo.url|default:'/static/images/default-team.png' }}" alt="{{ match.away_team.name }}" class="team-logo">
+                </div>
+            </div>
+            
+            <div class="match-status {% if match.status == 'LIVE' %}status-live{% elif match.status == 'COMPLETED' %}status-completed{% else %}status-upcoming{% endif %}" id="match-status">
+                {% if match.status == 'LIVE' %}
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        LIVE - {{ match.current_over|default:"In Progress" }}
+                    </div>
+                {% elif match.status == 'COMPLETED' %}
+                    <i class="fas fa-check-circle me-2"></i>
+                    Completed
+                {% else %}
+                    <i class="fas fa-clock me-2"></i>
+                    {{ match.match_datetime|date:"M d, Y H:i" }}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Live Scorecard -->
+        <div class="scorecard-section">
+            <h2 class="section-title">
+                <i class="fas fa-table"></i>
+                Live Scorecard
+                {% if match.status == 'LIVE' %}
+                <div class="live-indicator ms-3">
+                    <div class="live-dot"></div>
+                    Live
+                </div>
+                {% endif %}
+            </h2>
+            
+            <div id="scorecard-content">
+                <!-- Scorecard will be loaded here -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading scorecard...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batting Scorecard -->
+        <div class="scorecard-section">
+            <h2 class="section-title">
+                <i class="fas fa-baseball-ball"></i>
+                Batting Scorecard
+            </h2>
+            
+            <div class="scorecard-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Batsman</th>
+                            <th>Runs</th>
+                            <th>Balls</th>
+                            <th>4s</th>
+                            <th>6s</th>
+                            <th>SR</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="batting-scorecard">
+                        <!-- Batting data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bowling Scorecard -->
+        <div class="scorecard-section">
+            <h2 class="section-title">
+                <i class="fas fa-bowling-ball"></i>
+                Bowling Scorecard
+            </h2>
+            
+            <div class="scorecard-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bowler</th>
+                            <th>Overs</th>
+                            <th>Runs</th>
+                            <th>Wickets</th>
+                            <th>Econ</th>
+                            <th>0s</th>
+                            <th>4s</th>
+                            <th>6s</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bowling-scorecard">
+                        <!-- Bowling data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Match Statistics -->
+        <div class="scorecard-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                Match Statistics
+            </h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-runs">{{ total_score }}</div>
+                    <div class="stat-label">Total Runs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-wickets">12</div>
+                    <div class="stat-label">Total Wickets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-overs">45.3</div>
+                    <div class="stat-label">Total Overs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="run-rate">6.8</div>
+                    <div class="stat-label">Run Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="partnership">87</div>
+                    <div class="stat-label">Current Partnership</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="required-rate">7.2</div>
+                    <div class="stat-label">Required Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Commentary -->
+        <div class="scorecard-section">
+            <h2 class="section-title">
+                <i class="fas fa-commentary"></i>
+                Live Commentary
+            </h2>
+            
+            <div id="live-commentary">
+                <!-- Commentary will be loaded here -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading commentary...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Match data
+        const matchData = {
+            id: {{ match.id }},
+            sport: '{{ match.sport|lower }}',
+            status: '{{ match.status }}',
+            homeTeam: '{{ match.home_team.name }}',
+            awayTeam: '{{ match.away_team.name }}',
+            homeScore: {{ match.home_score }},
+            awayScore: {{ match.away_score }}
+        };
+
+        // WebSocket connection for live updates
+        let ws = null;
+        let updateInterval = null;
+
+        // Initialize live updates
+        function initializeLiveUpdates() {
+            if (matchData.status === 'LIVE') {
+                // Connect to WebSocket for live updates
+                connectWebSocket();
+                
+                // Fallback: Poll for updates every 5 seconds
+                updateInterval = setInterval(fetchLiveScorecard, 5000);
+            } else {
+                // Load static scorecard for completed matches
+                fetchStaticScorecard();
+            }
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/match/${matchData.id}/`;
+            
+            try {
+                ws = new WebSocket(wsUrl);
+                
+                ws.onopen = function(event) {
+                    console.log('WebSocket connected');
+                    fetchLiveScorecard();
+                };
+                
+                ws.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    updateScorecard(data);
+                };
+                
+                ws.onclose = function(event) {
+                    console.log('WebSocket disconnected');
+                    // Fallback to polling
+                    if (updateInterval === null) {
+                        updateInterval = setInterval(fetchLiveScorecard, 5000);
+                    }
+                };
+                
+                ws.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                };
+            } catch (error) {
+                console.error('Failed to connect WebSocket:', error);
+                // Fallback to polling
+                updateInterval = setInterval(fetchLiveScorecard, 5000);
+            }
+        }
+
+        // Fetch live scorecard
+        function fetchLiveScorecard() {
+            fetch(`/api/live-scorecard/${matchData.id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    updateScorecard(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching live scorecard:', error);
+                    // Load mock data for demo
+                    loadMockScorecard();
+                });
+        }
+
+        // Fetch static scorecard
+        function fetchStaticScorecard() {
+            fetch(`/api/scorecard/${matchData.id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    updateScorecard(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching static scorecard:', error);
+                    // Load mock data for demo
+                    loadMockScorecard();
+                });
+        }
+
+        // Update scorecard with new data
+        function updateScorecard(data) {
+            // Update scores
+            if (data.homeScore !== undefined) {
+                document.getElementById('home-score').textContent = data.homeScore;
+            }
+            if (data.awayScore !== undefined) {
+                document.getElementById('away-score').textContent = data.awayScore;
+            }
+            
+            // Update batting scorecard
+            if (data.battingScorecard) {
+                updateBattingScorecard(data.battingScorecard);
+            }
+            
+            // Update bowling scorecard
+            if (data.bowlingScorecard) {
+                updateBowlingScorecard(data.bowlingScorecard);
+            }
+            
+            // Update statistics
+            if (data.statistics) {
+                updateStatistics(data.statistics);
+            }
+            
+            // Update commentary
+            if (data.commentary) {
+                updateCommentary(data.commentary);
+            }
+            
+            // Update status
+            if (data.status) {
+                updateMatchStatus(data.status);
+            }
+        }
+
+        // Update batting scorecard
+        function updateBattingScorecard(battingData) {
+            const tbody = document.getElementById('batting-scorecard');
+            tbody.innerHTML = '';
+            
+            battingData.forEach(batsman => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="player-name">${batsman.name}</td>
+                    <td><span class="stat-badge stat-runs">${batsman.runs}</span></td>
+                    <td>${batsman.balls}</td>
+                    <td>${batsman.fours}</td>
+                    <td>${batsman.sixes}</td>
+                    <td>${batsman.strikeRate}</td>
+                    <td>${batsman.status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update bowling scorecard
+        function updateBowlingScorecard(bowlingData) {
+            const tbody = document.getElementById('bowling-scorecard');
+            tbody.innerHTML = '';
+            
+            bowlingData.forEach(bowler => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="player-name">${bowler.name}</td>
+                    <td><span class="stat-badge stat-overs">${bowler.overs}</span></td>
+                    <td>${bowler.runs}</td>
+                    <td><span class="stat-badge stat-wickets">${bowler.wickets}</span></td>
+                    <td>${bowler.economy}</td>
+                    <td>${bowler.dots}</td>
+                    <td>${bowler.fours}</td>
+                    <td>${bowler.sixes}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStatistics(stats) {
+            if (stats.totalRuns) document.getElementById('total-runs').textContent = stats.totalRuns;
+            if (stats.totalWickets) document.getElementById('total-wickets').textContent = stats.totalWickets;
+            if (stats.totalOvers) document.getElementById('total-overs').textContent = stats.totalOvers;
+            if (stats.runRate) document.getElementById('run-rate').textContent = stats.runRate;
+            if (stats.partnership) document.getElementById('partnership').textContent = stats.partnership;
+            if (stats.requiredRate) document.getElementById('required-rate').textContent = stats.requiredRate;
+        }
+
+        // Update commentary
+        function updateCommentary(commentary) {
+            const container = document.getElementById('live-commentary');
+            container.innerHTML = '';
+            
+            commentary.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'commentary-item';
+                div.innerHTML = `
+                    <div class="commentary-time">${item.time}</div>
+                    <div class="commentary-text">${item.text}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Update match status
+        function updateMatchStatus(status) {
+            const statusElement = document.getElementById('match-status');
+            if (status === 'LIVE') {
+                statusElement.innerHTML = `
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        LIVE - ${status.over || 'In Progress'}
+                    </div>
+                `;
+                statusElement.className = 'match-status status-live';
+            } else if (status === 'COMPLETED') {
+                statusElement.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
+                    Completed
+                `;
+                statusElement.className = 'match-status status-completed';
+                // Clear intervals when match ends
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                    updateInterval = null;
+                }
+                if (ws) {
+                    ws.close();
+                    ws = null;
+                }
+            }
+        }
+
+        // Load mock scorecard for demo
+        function loadMockScorecard() {
+            // Mock batting data
+            const mockBatting = [
+                { name: 'Virat Kohli', runs: 85, balls: 92, fours: 8, sixes: 2, strikeRate: '92.39', status: 'Batting' },
+                { name: 'Rohit Sharma', runs: 45, balls: 38, fours: 6, sixes: 1, strikeRate: '118.42', status: 'Batting' },
+                { name: 'KL Rahul', runs: 32, balls: 28, fours: 4, sixes: 0, strikeRate: '114.29', status: 'c. Smith b. Johnson' },
+                { name: 'Rishabh Pant', runs: 28, balls: 22, fours: 3, sixes: 1, strikeRate: '127.27', status: 'c. Warner b. Cummins' }
+            ];
+            
+            // Mock bowling data
+            const mockBowling = [
+                { name: 'Pat Cummins', overs: '8.3', runs: 45, wickets: 2, economy: '5.29', dots: 18, fours: 4, sixes: 1 },
+                { name: 'Mitchell Starc', overs: '9.0', runs: 52, wickets: 1, economy: '5.78', dots: 15, fours: 5, sixes: 2 },
+                { name: 'Josh Hazlewood', overs: '8.0', runs: 38, wickets: 1, economy: '4.75', dots: 20, fours: 3, sixes: 0 }
+            ];
+            
+            // Mock commentary
+            const mockCommentary = [
+                { time: '45.3', text: 'FOUR! Beautiful cover drive by Kohli, finds the gap perfectly' },
+                { time: '45.2', text: 'SINGLE! Rohit pushes it to mid-wicket for a quick single' },
+                { time: '45.1', text: 'DOT BALL! Good length delivery, defended back to the bowler' },
+                { time: '45.0', text: 'SIX! Massive hit over long-on by Rohit Sharma!' }
+            ];
+            
+            // Update with mock data
+            updateBattingScorecard(mockBatting);
+            updateBowlingScorecard(mockBowling);
+            updateCommentary(mockCommentary);
+            
+            // Update statistics
+            updateStatistics({
+                totalRuns: matchData.homeScore + matchData.awayScore,
+                totalWickets: 4,
+                totalOvers: '45.3',
+                runRate: '6.8',
+                partnership: '87',
+                requiredRate: '7.2'
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLiveUpdates();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (ws) {
+                ws.close();
+            }
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        });
+    </script>
+</body>
+</html>

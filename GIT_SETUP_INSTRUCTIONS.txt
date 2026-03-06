@@ -1,0 +1,133 @@
+GIT SETUP INSTRUCTIONS FOR SPORTS HUB PROJECT
+
+===============================================
+
+STEP 1: INSTALL GIT
+------------------
+1. Go to: https://git-scm.com/download/win
+2. Download Git for Windows
+3. Run the installer with default settings
+4. Restart PowerShell/Command Prompt after installation
+
+STEP 2: VERIFY GIT INSTALLATION
+------------------------------
+Open PowerShell and run:
+git --version
+
+You should see something like: git version 2.xx.x
+
+STEP 3: NAVIGATE TO PROJECT
+---------------------------
+cd "C:\Users\harsh\Desktop\my sport project\sports_hub"
+
+STEP 4: INITIALIZE GIT REPOSITORY
+--------------------------------
+git init
+
+STEP 5: CREATE .gitignore FILE
+------------------------------
+Create a file named .gitignore with these contents:
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environment variables
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media files (optional - remove if you want to include logos)
+media/
+
+STEP 6: ADD ALL FILES
+--------------------
+git add .
+
+STEP 7: MAKE INITIAL COMMIT
+---------------------------
+git commit -m "Initial commit: Sports Hub with professional logos and scorecard system"
+
+STEP 8: ADD REMOTE REPOSITORY
+------------------------------
+git remote add origin https://github.com/harshil3214/sporthub.git
+
+STEP 9: SET MAIN BRANCH
+-----------------------
+git branch -M main
+
+STEP 10: PUSH TO GITHUB
+-----------------------
+git push -u origin main
+
+===============================================
+
+TROUBLESHOOTING:
+---------------
+
+If you get "git: command not found" error:
+- Git is not installed or not in PATH
+- Restart your computer after Git installation
+- Try using Git Bash instead of PowerShell
+
+If you get authentication error:
+- Use GitHub Personal Access Token
+- Or use GitHub Desktop for easier authentication
+
+If you get "remote origin already exists" error:
+- git remote remove origin
+- Then run: git remote add origin https://github.com/harshil3214/sporthub.git
+
+===============================================
+
+WHAT YOU'RE PUSHING:
+------------------
+✅ Professional team logos with team colors
+✅ Full scorecard system with live updates  
+✅ Clickable team names and scores
+✅ Working navigation (Competitions, Rankings, News, Favorites)
+✅ Modern, responsive design
+✅ Multi-sport support (Cricket, Football, Volleyball)
+✅ Django web application
+✅ Database models and views
+✅ Templates and static files
+
+===============================================

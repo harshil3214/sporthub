@@ -1,0 +1,49 @@
+<div class="match-row d-flex align-items-center justify-content-between flex-wrap gap-2 py-2"
+     data-sport="{{ row.sport }}" data-id="{{ row.id }}">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <span class="badge {% if row.status == 'LIVE' %}bg-danger{% elif row.status == 'FINISHED' %}bg-success{% else %}bg-secondary{% endif %}">
+      {{ row.status_display|default:row.status }}
+    </span>
+    {% if row.match_datetime %}
+      <span class="text-secondary small fw-bold">
+        {{ row.match_datetime|time:"H:i" }}
+      </span>
+    {% endif %}
+    {% if row.round_name %}
+      <span class="text-secondary small">{{ row.round_name }}</span>
+    {% endif %}
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between gap-3 flex-grow-1" style="min-width: 320px;">
+    <div class="d-flex align-items-center gap-2" style="min-width: 160px;">
+      {% if row.home_team.logo %}<img src="{{ row.home_team.logo.url }}" style="width:18px;height:18px;object-fit:contain;">{% endif %}
+      <span class="fw-bold">{{ row.home_team.name }}</span>
+    </div>
+
+    <div class="score-box text-center px-3 py-1 rounded"
+         style="min-width: 120px; border: 1px solid rgba(148,163,184,.25); background: rgba(15,23,42,.6);">
+      {% if row.score_kind == 'cricket' %}
+        <span class="fw-bold text-info">{{ row.m.home_runs }}/{{ row.m.home_wickets }} ({{ row.m.home_overs }})</span>
+        <span class="text-secondary px-2">vs</span>
+        <span class="fw-bold text-info">{{ row.m.away_runs }}/{{ row.m.away_wickets }} ({{ row.m.away_overs }})</span>
+      {% elif row.score_kind == 'sets' %}
+        <span class="fw-bold text-info">{{ row.m.home_sets_won }} - {{ row.m.away_sets_won }}</span>
+        <span class="text-secondary small">SETS</span>
+      {% else %}
+        <span class="fw-bold text-info">{{ row.m.home_score }} - {{ row.m.away_score }}</span>
+      {% endif %}
+    </div>
+
+    <div class="d-flex align-items-center gap-2 justify-content-end" style="min-width: 160px;">
+      <span class="fw-bold">{{ row.away_team.name }}</span>
+      {% if row.away_team.logo %}<img src="{{ row.away_team.logo.url }}" style="width:18px;height:18px;object-fit:contain;">{% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+    <a class="btn btn-sm btn-outline-info"
+       href="{% url 'match_detail' row.sport row.id %}">
+      Match
+    </a>
+  </div>
+</div>

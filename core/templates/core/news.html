@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports News | Sports Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #13B497 0%, #10D876 100%);
+            --dark-bg: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --accent-blue: #4a90e2;
+            --accent-green: #27ae60;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-purple: #9b59b6;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow-large: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Header */
+        .main-header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            color: var(--text-primary) !important;
+            background: var(--primary-gradient);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a8b2d1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Featured News */
+        .featured-news {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-medium);
+            position: relative;
+        }
+
+        .featured-news::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .featured-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background: var(--primary-gradient);
+        }
+
+        .featured-content {
+            padding: 2rem;
+        }
+
+        .featured-badge {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .featured-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .featured-excerpt {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* News Grid */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--primary-gradient);
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-category {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-football { background: rgba(74, 144, 226, 0.2); color: var(--accent-blue); }
+        .category-cricket { background: rgba(39, 174, 96, 0.2); color: var(--accent-green); }
+        .category-basketball { background: rgba(243, 156, 18, 0.2); color: var(--accent-orange); }
+        .category-tennis { background: rgba(155, 89, 182, 0.2); color: var(--accent-purple); }
+        .category-general { background: rgba(255, 255, 255, 0.1); color: var(--text-secondary); }
+
+        .news-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .news-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .news-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Action Buttons */
+        .btn-gradient {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .featured-image {
+                height: 250px;
+            }
+            
+            .filter-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <a href="/" class="logo">
+                    <i class="fas fa-trophy"></i>
+                    Sports Hub
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/scores/"><i class="fas fa-list me-2"></i>Scores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/competitions/"><i class="fas fa-trophy me-2"></i>Competitions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rankings/"><i class="fas fa-chart-bar me-2"></i>Rankings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/news/"><i class="fas fa-newspaper me-2"></i>News</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favorites/"><i class="fas fa-star me-2"></i>Favorites</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">
+                <i class="fas fa-newspaper me-3"></i>
+                Sports News
+            </h1>
+            <p class="hero-subtitle">Latest news, updates, and stories from the world of sports</p>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">All Categories</option>
+                        <option value="football">Football</option>
+                        <option value="cricket">Cricket</option>
+                        <option value="basketball">Basketball</option>
+                        <option value="tennis">Tennis</option>
+                        <option value="general">General</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search news...">
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="date" class="form-label">Date Range</label>
+                    <select name="date" id="date" class="form-select">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                    <a href="/news/" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        <!-- Featured News -->
+        <article class="featured-news">
+            <img src="https://picsum.photos/seed/featured-sports/1200/400" alt="Featured News" class="featured-image">
+            <div class="featured-content">
+                <span class="featured-badge">Breaking News</span>
+                <h2 class="featured-title">Manchester City Secures Dramatic Late Victory to Extend Premier League Lead</h2>
+                <p class="featured-excerpt">
+                    In a thrilling encounter at the Etihad Stadium, Manchester City scored twice in the final five minutes to overcome a stubborn Arsenal defense and move three points clear at the top of the Premier League table. The late heroics showcased the championship pedigree that has defined Pep Guardiola's side this season.
+                </p>
+                <div class="featured-meta">
+                    <div class="news-author">
+                        <div class="author-avatar">JD</div>
+                        <span>John Doe</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-clock me-1"></i>
+                        2 hours ago
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- News Grid -->
+        <div class="news-grid">
+            <article class="news-card">
+                <img src="https://picsum.photos/seed/football-match/400/200" alt="Football News" class="news-image">
+                <div class="news-content">
+                    <span class="news-category category-football">Football</span>
+                    <h3 class="news-title">Real Madrid Announces Record-Breaking Signing for Next Season</h3>
+                    <p class="news-excerpt">
+                        Spanish giants Real Madrid have confirmed the signing of a world-class midfielder in a deal that could break the club's transfer record, sending shockwaves through European football.
+                    </p>
+                    <div class="news-meta">
+                        <div class="news-author">
+                            <div class="author-avatar">SM</div>
+                            <span>Sarah Martinez</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock me-1"></i>
+                            4 hours ago
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-card">
+                <img src="https://picsum.photos/seed/cricket-tournament/400/200" alt="Cricket News" class="news-image">
+                <div class="news-content">
+                    <span class="news-category category-cricket">Cricket</span>
+                    <h3 class="news-title">India Clinches Thrilling Series Victory in Final Over Drama</h3>
+                    <p class="news-excerpt">
+                        In a nail-biting finish that had fans on the edge of their seats, India managed to chase down the target with just one wicket remaining, securing a memorable series win against Australia.
+                    </p>
+                    <div class="news-meta">
+                        <div class="news-author">
+                            <div class="author-avatar">RP</div>
+                            <span>Raj Patel</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock me-1"></i>
+                            5 hours ago
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-card">
+                <img src="https://picsum.photos/seed/basketball-game/400/200" alt="Basketball News" class="news-image">
+                <div class="news-content">
+                    <span class="news-category category-basketball">Basketball</span>
+                    <h3 class="news-title">Lakers' Star Player Sets New Franchise Record in Triple-Double Performance</h3>
+                    <p class="news-excerpt">
+                        The Los Angeles Lakers' superstar delivered a historic performance, setting a new franchise record for most triple-doubles in a single season during their victory over the Golden State Warriors.
+                    </p>
+                    <div class="news-meta">
+                        <div class="news-author">
+                            <div class="author-avatar">MJ</div>
+                            <span>Mike Johnson</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock me-1"></i>
+                            6 hours ago
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-card">
+                <img src="https://picsum.photos/seed/tennis-match/400/200" alt="Tennis News" class="news-image">
+                <div class="news-content">
+                    <span class="news-category category-tennis">Tennis</span>
+                    <h3 class="news-title">Rising Star Stuns Former World Number One in Grand Slam Upset</h3>
+                    <p class="news-excerpt">
+                        In one of the biggest shocks of the tournament, a young qualifier defeated a former world number one in straight sets, announcing their arrival on the big stage in spectacular fashion.
+                    </p>
+                    <div class="news-meta">
+                        <div class="news-author">
+                            <div class="author-avatar">EC</div>
+                            <span>Emma Chen</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock me-1"></i>
+                            8 hours ago
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-card">
+                <img src="https://picsum.photos/seed/sports-analysis/400/200" alt="Sports Analysis" class="news-image">
+                <div class="news-content">
+                    <span class="news-category category-general">Analysis</span>
+                    <h3 class="news-title">Data Analytics Revolution: How Teams Are Using AI to Gain Competitive Edge</h3>
+                    <p class="news-excerpt">
+                        From predictive modeling to real-time performance analysis, sports teams are increasingly turning to artificial intelligence and machine learning to optimize player performance and strategy.
+                    </p>
+                    <div class="news-meta">
+                        <div class="news-author">
+                            <div class="author-avatar">DL</div>
+                            <span>David Lee</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock me-1"></i>
+                            10 hours ago
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-card">
+                <img src="https://picsum.photos/seed/olympic-sports/400/200" alt="Olympic Sports" class="news-image">
+                <div class="news-content">
+                    <span class="news-category category-general">Olympics</span>
+                    <h3 class="news-title">Paris 2024: New Records Set as Athletes Push Boundaries of Human Performance</h3>
+                    <p class="news-excerpt">
+                        The Paris Olympics have already witnessed several world records falling as athletes continue to push the limits of human achievement across various disciplines in the first week of competition.
+                    </p>
+                    <div class="news-meta">
+                        <div class="news-author">
+                            <div class="author-avatar">AW</div>
+                            <span>Alex Wilson</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock me-1"></i>
+                            12 hours ago
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.news-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add fade in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

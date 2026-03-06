@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scores | Sports Hub - Live Scores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #13B497 0%, #10D876 100%);
+            --dark-bg: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --accent-blue: #4a90e2;
+            --accent-green: #27ae60;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-purple: #9b59b6;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow-large: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Header Styles */
+        .main-header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            color: var(--text-primary) !important;
+            background: var(--primary-gradient);
+            color: white !important;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .filter-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn-gradient {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+
+        /* Sport Pills */
+        .sport-pills {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .sport-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .sport-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .sport-pill.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Match Groups */
+        .match-group {
+            margin-bottom: 2rem;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .group-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .group-count {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Match Cards */
+        .match-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .match-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .match-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-medium);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .competition-badge {
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .match-time {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .match-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-live {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--accent-red);
+        }
+
+        .status-finished {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--accent-green);
+        }
+
+        .status-upcoming {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .team-score {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .vs-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .vs-text {
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .match-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--card-border);
+            padding-top: 1rem;
+        }
+
+        /* Loading State */
+        .loading-container {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .match-teams {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .vs-divider {
+                padding: 0;
+            }
+            
+            .team-score {
+                font-size: 1.5rem;
+            }
+
+            .filter-section {
+                padding: 1.5rem;
+            }
+
+            .group-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Small Team Logos */
+        .team-logo-small {
+            width: 24px;
+            height: 24px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .team-logo-small-placeholder {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Clickable Scores */
+        .score-clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .score-clickable:hover {
+            transform: scale(1.1);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-clickable::after {
+            content: 'View Scorecard';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .score-clickable:hover::after {
+            opacity: 1;
+            bottom: -30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <a href="/" class="logo">
+                    <i class="fas fa-trophy"></i>
+                    Sports Hub
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/scores/"><i class="fas fa-list me-2"></i>Scores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/competitions/"><i class="fas fa-trophy me-2"></i>Competitions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rankings/"><i class="fas fa-chart-bar me-2"></i>Rankings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news/"><i class="fas fa-newspaper me-2"></i>News</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favorites/"><i class="fas fa-star me-2"></i>Favorites</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <h2 class="filter-title">
+                <i class="fas fa-filter me-2"></i>
+                Filter Matches
+            </h2>
+            
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label for="sport" class="form-label">Sport</label>
+                    <select name="sport" id="sport" class="form-select">
+                        <option value="all" {% if selected_sport == 'all' %}selected{% endif %}>All Sports</option>
+                        <option value="football" {% if selected_sport == 'football' %}selected{% endif %}>Football</option>
+                        <option value="cricket" {% if selected_sport == 'cricket' %}selected{% endif %}>Cricket</option>
+                        <option value="volleyball" {% if selected_sport == 'volleyball' %}selected{% endif %}>Volleyball</option>
+                        <option value="universal" {% if selected_sport == 'universal' %}selected{% endif %}>Other Sports</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" name="date" id="date" class="form-control" value="{{ day|date:'Y-m-d' }}">
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="q" class="form-label">Search</label>
+                    <input type="text" name="q" id="q" class="form-control" placeholder="Teams, competitions..." value="{{ q }}">
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn-gradient">
+                        <i class="fas fa-search"></i>
+                        Apply Filters
+                    </button>
+                    <a href="/scores/" class="btn-gradient ms-2">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        <!-- Sport Pills -->
+        <div class="sport-pills">
+            <a href="?sport=all" class="sport-pill {% if selected_sport == 'all' %}active{% endif %}">
+                <i class="fas fa-globe me-1"></i>All
+            </a>
+            <a href="?sport=football" class="sport-pill {% if selected_sport == 'football' %}active{% endif %}">
+                <i class="fas fa-futbol me-1"></i>Football
+            </a>
+            <a href="?sport=cricket" class="sport-pill {% if selected_sport == 'cricket' %}active{% endif %}">
+                <i class="fas fa-baseball-ball me-1"></i>Cricket
+            </a>
+            <a href="?sport=volleyball" class="sport-pill {% if selected_sport == 'volleyball' %}active{% endif %}">
+                <i class="fas fa-volleyball-ball me-1"></i>Volleyball
+            </a>
+            <a href="?sport=universal" class="sport-pill {% if selected_sport == 'universal' %}active{% endif %}">
+                <i class="fas fa-trophy me-1"></i>Others
+            </a>
+        </div>
+
+        <!-- Matches by Sport and Competition -->
+        {% if grouped %}
+            {% for sport_name, countries in grouped.items %}
+                <div class="match-group">
+                    <h3 class="group-title">
+                        {% if sport_name == 'football' %}
+                            <i class="fas fa-futbol"></i>
+                        {% elif sport_name == 'cricket' %}
+                            <i class="fas fa-baseball-ball"></i>
+                        {% elif sport_name == 'volleyball' %}
+                            <i class="fas fa-volleyball-ball"></i>
+                        {% else %}
+                            <i class="fas fa-trophy"></i>
+                        {% endif %}
+                        {{ sport_name|title }}
+                    </h3>
+                    
+                    {% for country, competitions in countries.items %}
+                        {% for competition_name, matches in competitions.items %}
+                            <div class="group-header">
+                                <div>
+                                    <strong>{{ competition_name }}</strong>
+                                    {% if country != 'International' %}
+                                        <span class="text-secondary ms-2">{{ country }}</span>
+                                    {% endif %}
+                                </div>
+                                <span class="group-count">{{ matches|length }} matches</span>
+                            </div>
+                            
+                            {% for match in matches %}
+                            <div class="match-card">
+                                <div class="match-header">
+                                    <span class="competition-badge">{{ match.competition_name }}</span>
+                                    <div>
+                                        {% if match.status == 'LIVE' %}
+                                            <span class="match-status status-live">
+                                                <span class="live-dot"></span>
+                                                LIVE
+                                            </span>
+                                        {% elif match.status == 'FINISHED' %}
+                                            <span class="match-status status-finished">
+                                                <i class="fas fa-check me-1"></i>
+                                                {{ match.status_display }}
+                                            </span>
+                                        {% else %}
+                                            <span class="match-status status-upcoming">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ match.status_display }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="match-teams">
+                                    <div class="team">
+                                        <a href="/team/{{ match.home_team.id }}/" class="text-decoration-none d-flex align-items-center gap-2">
+                                            {% if match.home_team.logo %}
+                                                <img src="{{ match.home_team.logo.url }}" alt="{{ match.home_team.name }}" class="team-logo-small">
+                                            {% else %}
+                                                <div class="team-logo-small-placeholder">
+                                                    {% if match.sport == 'football' %}
+                                                        <i class="fas fa-futbol"></i>
+                                                    {% elif match.sport == 'cricket' %}
+                                                        <i class="fas fa-baseball-ball"></i>
+                                                    {% elif match.sport == 'volleyball' %}
+                                                        <i class="fas fa-volleyball-ball"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-trophy"></i>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="team-name">{{ match.home_team.name }}</div>
+                                        </a>
+                                        <a href="/scorecard/{{ match.id }}/" class="text-decoration-none">
+                                            <div class="team-score score-clickable">
+                                                {% if match.score_kind == 'cricket' %}
+                                                    {{ match.m.home_runs }}/{{ match.m.home_wickets }}
+                                                {% elif match.score_kind == 'sets' %}
+                                                    {{ match.m.home_sets_won }}
+                                                {% else %}
+                                                    {{ match.m.home_score }}
+                                                {% endif %}
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="vs-divider">
+                                        <div class="vs-text">VS</div>
+                                        {% if match.match_datetime %}
+                                            <small>{{ match.match_datetime|date:"H:i" }}</small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="team">
+                                        <a href="/team/{{ match.away_team.id }}/" class="text-decoration-none d-flex align-items-center gap-2">
+                                            {% if match.away_team.logo %}
+                                                <img src="{{ match.away_team.logo.url }}" alt="{{ match.away_team.name }}" class="team-logo-small">
+                                            {% else %}
+                                                <div class="team-logo-small-placeholder">
+                                                    {% if match.sport == 'football' %}
+                                                        <i class="fas fa-futbol"></i>
+                                                    {% elif match.sport == 'cricket' %}
+                                                        <i class="fas fa-baseball-ball"></i>
+                                                    {% elif match.sport == 'volleyball' %}
+                                                        <i class="fas fa-volleyball-ball"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-trophy"></i>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            <div class="team-name">{{ match.away_team.name }}</div>
+                                        </a>
+                                        <a href="/scorecard/{{ match.id }}/" class="text-decoration-none">
+                                            <div class="team-score score-clickable">
+                                                {% if match.score_kind == 'cricket' %}
+                                                    {{ match.m.away_runs }}/{{ match.m.away_wickets }}
+                                                {% elif match.score_kind == 'sets' %}
+                                                    {{ match.m.away_sets_won }}
+                                                {% else %}
+                                                    {{ match.m.away_score }}
+                                                {% endif %}
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="match-details">
+                                    <span><i class="fas fa-map-marker-alt me-1"></i>{{ match.venue }}</span>
+                                    {% if match.round_name %}
+                                        <span><i class="fas fa-info-circle me-1"></i>{{ match.round_name }}</span>
+                                    {% endif %}
+                                    {% if match.referee %}
+                                        <span><i class="fas fa-user me-1"></i>{{ match.referee }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <h3>No matches found</h3>
+                <p>Try adjusting your filters or check back later for upcoming matches.</p>
+                <a href="/scores/" class="btn-gradient mt-3">
+                    <i class="fas fa-redo"></i>
+                    Reset Filters
+                </a>
+            </div>
+        {% endif %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-refresh live matches
+        let refreshInterval;
+        
+        function startAutoRefresh() {
+            refreshInterval = setInterval(() => {
+                const currentUrl = new URL(window.location);
+                fetch(currentUrl.pathname + currentUrl.search)
+                    .then(response => response.text())
+                    .then(html => {
+                        // Parse the HTML and update live matches
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        // Update live status indicators
+                        const liveIndicators = doc.querySelectorAll('.status-live');
+                        document.querySelectorAll('.status-live').forEach((el, index) => {
+                            if (liveIndicators[index]) {
+                                el.innerHTML = liveIndicators[index].innerHTML;
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error refreshing scores:', error));
+            }, 30000); // Refresh every 30 seconds
+        }
+        
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        }
+        
+        // Start auto-refresh when page loads
+        document.addEventListener('DOMContentLoaded', startAutoRefresh);
+        
+        // Stop auto-refresh when page is hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+            }
+        });
+        
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.match-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add fade in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

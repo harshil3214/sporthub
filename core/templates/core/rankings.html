@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rankings | Sports Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #13B497 0%, #10D876 100%);
+            --dark-bg: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --accent-blue: #4a90e2;
+            --accent-green: #27ae60;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-purple: #9b59b6;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow-large: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Header */
+        .main-header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            color: var(--text-primary) !important;
+            background: var(--primary-gradient);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a8b2d1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Rankings Table */
+        .rankings-table {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .rankings-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rankings-table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .rankings-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rankings-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .rank-position {
+            font-weight: 800;
+            font-size: 1.2rem;
+            width: 60px;
+            text-align: center;
+        }
+
+        .rank-1 { color: #FFD700; }
+        .rank-2 { color: #C0C0C0; }
+        .rank-3 { color: #CD7F32; }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .rank-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .rank-stat {
+            text-align: center;
+        }
+
+        .rank-stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .rank-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .rank-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .form-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .form-w { background: rgba(39, 174, 96, 0.2); color: var(--accent-green); }
+        .form-d { background: rgba(243, 156, 18, 0.2); color: var(--accent-orange); }
+        .form-l { background: rgba(231, 76, 60, 0.2); color: var(--accent-red); }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Action Buttons */
+        .btn-gradient {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .rankings-table {
+                font-size: 0.9rem;
+            }
+            
+            .rank-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .filter-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <a href="/" class="logo">
+                    <i class="fas fa-trophy"></i>
+                    Sports Hub
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/scores/"><i class="fas fa-list me-2"></i>Scores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/competitions/"><i class="fas fa-trophy me-2"></i>Competitions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/rankings/"><i class="fas fa-chart-bar me-2"></i>Rankings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news/"><i class="fas fa-newspaper me-2"></i>News</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favorites/"><i class="fas fa-star me-2"></i>Favorites</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">
+                <i class="fas fa-chart-bar me-3"></i>
+                Rankings
+            </h1>
+            <p class="hero-subtitle">Current standings and rankings across all competitions</p>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label for="sport" class="form-label">Sport</label>
+                    <select name="sport" id="sport" class="form-select">
+                        <option value="">All Sports</option>
+                        <option value="football">Football</option>
+                        <option value="cricket">Cricket</option>
+                        <option value="basketball">Basketball</option>
+                        <option value="tennis">Tennis</option>
+                        <option value="volleyball">Volleyball</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="competition" class="form-label">Competition</label>
+                    <select name="competition" id="competition" class="form-select">
+                        <option value="">All Competitions</option>
+                        <option value="premier-league">Premier League</option>
+                        <option value="la-liga">La Liga</option>
+                        <option value="bundesliga">Bundesliga</option>
+                        <option value="serie-a">Serie A</option>
+                        <option value="ipl">IPL</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="type" class="form-label">Ranking Type</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="table">League Table</option>
+                        <option value="form">Current Form</option>
+                        <option value="goals">Goals Scored</option>
+                        <option value="defense">Best Defense</option>
+                    </select>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                    <a href="/rankings/" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        <!-- Football Rankings -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-futbol"></i>
+                Football Rankings
+            </h2>
+            
+            <div class="rankings-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Team</th>
+                            <th>Played</th>
+                            <th>Won</th>
+                            <th>Drawn</th>
+                            <th>Lost</th>
+                            <th>Goals</th>
+                            <th>Points</th>
+                            <th>Form</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="rank-position rank-1">1</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/manchester_city_logo.png" alt="Manchester City" class="team-logo">
+                                    <a href="/team/1/" class="team-name">Manchester City</a>
+                                </div>
+                            </td>
+                            <td>25</td>
+                            <td>18</td>
+                            <td>4</td>
+                            <td>3</td>
+                            <td>58:21</td>
+                            <td><strong>58</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-d">D</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position rank-2">2</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/arsenal_logo.png" alt="Arsenal" class="team-logo">
+                                    <a href="/team/3/" class="team-name">Arsenal</a>
+                                </div>
+                            </td>
+                            <td>25</td>
+                            <td>17</td>
+                            <td>5</td>
+                            <td>3</td>
+                            <td>52:25</td>
+                            <td><strong>56</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-l">L</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-d">D</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position rank-3">3</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/liverpool_logo.png" alt="Liverpool" class="team-logo">
+                                    <a href="/team/7/" class="team-name">Liverpool</a>
+                                </div>
+                            </td>
+                            <td>25</td>
+                            <td>16</td>
+                            <td>6</td>
+                            <td>3</td>
+                            <td>48:28</td>
+                            <td><strong>54</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-d">D</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position">4</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/chelsea_logo.png" alt="Chelsea" class="team-logo">
+                                    <a href="/team/6/" class="team-name">Chelsea</a>
+                                </div>
+                            </td>
+                            <td>25</td>
+                            <td>15</td>
+                            <td>7</td>
+                            <td>3</td>
+                            <td>45:30</td>
+                            <td><strong>52</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-d">D</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-l">L</div>
+                                    <div class="form-indicator form-w">W</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position">5</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/tottenham_logo.png" alt="Tottenham" class="team-logo">
+                                    <a href="/team/15/" class="team-name">Tottenham</a>
+                                </div>
+                            </td>
+                            <td>25</td>
+                            <td>14</td>
+                            <td>6</td>
+                            <td>5</td>
+                            <td>52:35</td>
+                            <td><strong>48</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-l">L</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-d">D</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-l">L</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Cricket Rankings -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-baseball-ball"></i>
+                Cricket Rankings
+            </h2>
+            
+            <div class="rankings-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Team</th>
+                            <th>Matches</th>
+                            <th>Won</th>
+                            <th>Lost</th>
+                            <th>Tied</th>
+                            <th>Points</th>
+                            <th>Rating</th>
+                            <th>Form</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="rank-position rank-1">1</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/india_logo.png" alt="India" class="team-logo">
+                                    <a href="/team/9/" class="team-name">India</a>
+                                </div>
+                            </td>
+                            <td>45</td>
+                            <td>32</td>
+                            <td>10</td>
+                            <td>3</td>
+                            <td><strong>3,456</strong></td>
+                            <td><strong>115</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-d">D</div>
+                                    <div class="form-indicator form-w">W</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position rank-2">2</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/australia_logo.png" alt="Australia" class="team-logo">
+                                    <a href="/team/4/" class="team-name">Australia</a>
+                                </div>
+                            </td>
+                            <td>42</td>
+                            <td>28</td>
+                            <td>11</td>
+                            <td>3</td>
+                            <td><strong>3,234</strong></td>
+                            <td><strong>108</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-l">L</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-l">L</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position rank-3">3</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/england_logo.png" alt="England" class="team-logo">
+                                    <a href="/team/5/" class="team-name">England</a>
+                                </div>
+                            </td>
+                            <td>38</td>
+                            <td>24</td>
+                            <td>12</td>
+                            <td>2</td>
+                            <td><strong>2,987</strong></td>
+                            <td><strong>102</strong></td>
+                            <td>
+                                <div class="rank-form">
+                                    <div class="form-indicator form-d">D</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-l">L</div>
+                                    <div class="form-indicator form-w">W</div>
+                                    <div class="form-indicator form-w">W</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Basketball Rankings -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-basketball-ball"></i>
+                Basketball Rankings
+            </h2>
+            
+            <div class="rankings-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Team</th>
+                            <th>Games</th>
+                            <th>Won</th>
+                            <th>Lost</th>
+                            <th>Win %</th>
+                            <th>Points</th>
+                            <th>Streak</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="rank-position rank-1">1</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/boston_celtics_logo.png" alt="Boston Celtics" class="team-logo">
+                                    <a href="/team/8/" class="team-name">Boston Celtics</a>
+                                </div>
+                            </td>
+                            <td>58</td>
+                            <td>45</td>
+                            <td>13</td>
+                            <td><strong>77.6%</strong></td>
+                            <td><strong>103</strong></td>
+                            <td>W5</td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position rank-2">2</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/los_angeles_lakers_logo.png" alt="Los Angeles Lakers" class="team-logo">
+                                    <a href="/team/10/" class="team-name">Los Angeles Lakers</a>
+                                </div>
+                            </td>
+                            <td>58</td>
+                            <td>42</td>
+                            <td>16</td>
+                            <td><strong>72.4%</strong></td>
+                            <td><strong>100</strong></td>
+                            <td>W3</td>
+                        </tr>
+                        <tr>
+                            <td class="rank-position rank-3">3</td>
+                            <td>
+                                <div class="team-info">
+                                    <img src="/media/teams/logos/golden_state_warriors_logo.png" alt="Golden State Warriors" class="team-logo">
+                                    <a href="/team/9/" class="team-name">Golden State Warriors</a>
+                                </div>
+                            </td>
+                            <td>58</td>
+                            <td>40</td>
+                            <td>18</td>
+                            <td><strong>69.0%</strong></td>
+                            <td><strong>98</strong></td>
+                            <td>W2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.rankings-table').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add fade in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

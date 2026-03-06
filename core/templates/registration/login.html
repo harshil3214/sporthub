@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Hub - Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* Updated to use your local static image with the online fallback as backup */
+            background: linear-gradient(rgba(10, 20, 35, 0.7), rgba(10, 20, 35, 0.7)), 
+                        url("{% static 'image/login_bg.png' %}") no-repeat center center fixed,
+                        url("https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=2069&auto=format&fit=crop");
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 50px 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            color: #FFD700;
+            font-size: 2.8rem;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-top: 8px;
+            margin-bottom: 32px;
+            font-size: 1rem;
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: #00d4ff;
+            border: none;
+            border-radius: 12px;
+            color: #0f172a;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+        .login-btn:hover {
+            background: #00b8e6;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 212, 255, 0.3);
+        }
+
+        .footer-link {
+            margin-top: 24px;
+        }
+
+        .footer-link a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>SPORTS HUB</h1>
+        <p class="subtitle">Welcome back! Please login.</p>
+
+        {% if form.errors %}
+        <div class="error-msg">
+            Invalid username or password.
+        </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+
+        <div class="footer-link">
+            <a href="{% url 'register' %}">New Player? Create Account</a>
+        </div>
+    </div>
+
+</body>
+</html>
